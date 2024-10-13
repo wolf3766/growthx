@@ -55,6 +55,7 @@ exports.login = async (req, res) => {
 // Upload Assignment
 exports.uploadAssignment = async (req, res) => {
     try {
+        if(req.user_role !== 'user') return res.status(403).json({ error: 'Access denied' });
         const { task, adminId } = req.body;
         const assignment = new Assignment({
             userId: req.user.id,

@@ -1,8 +1,10 @@
 const Assignment = require('../models/assignment');
+const user = require('../models/user');
 
 // Get All Assignments for an Admin
 exports.getAssignments = async (req, res) => {
     try {
+        if(req.user_role !== 'admin') return res.status(403).json({ error: 'Access denied' });
         const assignments = await Assignment.find({ adminId: req.user.id }).populate('userId', 'name').exec();
         res.status(200).json(assignments);
     } catch (error) {
@@ -13,6 +15,8 @@ exports.getAssignments = async (req, res) => {
 // Accept Assignment
 exports.acceptAssignment = async (req, res) => {
     try {
+        if (req.user_role !== 'admin') return res.status(403).json({ error: 'Access denied' });
+
         const { id } = req.params;
         const assignment = await Assignment.findById(id);
         if (!assignment) return res.status(404).json({ error: 'Assignment not found' });
@@ -27,6 +31,8 @@ exports.acceptAssignment = async (req, res) => {
 // Reject Assignment
 exports.rejectAssignment = async (req, res) => {
     try {
+        if (req.user_role !== 'admin') return res.status(403).json({ error: 'Access denied' });
+
         const { id } = req.params;
         const assignment = await Assignment.findById(id);
         if (!assignment) return res.status(404).json({ error: 'Assignment not found' });
